@@ -1,3 +1,4 @@
 # Development files
 build
 compile_commands.json
+.clangd
