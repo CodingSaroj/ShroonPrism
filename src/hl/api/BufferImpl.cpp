@@ -1,5 +1,5 @@
 #include "hl/api/Buffer.hpp"
-//#include "hl/gl33/Buffer.hpp"
+#include "hl/gl33/Buffer.hpp"
 #include "hl/gl45/Buffer.hpp"
 
 namespace Shroon
@@ -23,20 +23,20 @@ namespace Shroon
             {
                 switch (s_GraphicsAPI)
                 {
- //                   case API::GL33:
- //                   {
- //                       Buffer::CreateFn                        = GL33Buffer::Create;
- //                       Buffer::DestroyFn                       = GL33Buffer::Destroy;
- //                       Buffer::WriteFn                         = GL33Buffer::Write;
+                    case API::GL33:
+                    {
+                        Buffer::CreateFn                        = GL33Buffer::Create;
+                        Buffer::DestroyFn                       = GL33Buffer::Destroy;
+                        Buffer::WriteFn                         = GL33Buffer::Write;
 
- //                       BufferType::VertexArray         = GL_ARRAY_BUFFER;
- //                       BufferType::VertexArrayIndex    = GL_ELEMENT_ARRAY_BUFFER;
- //                       BufferType::Uniform             = GL_UNIFORM_BUFFER;
- //                       BufferType::TransferSrc         = GL_COPY_READ_BUFFER;
- //                       BufferType::TransferDst         = GL_COPY_WRITE_BUFFER;
+                        BufferType::VertexArray         = GL_ARRAY_BUFFER;
+                        BufferType::VertexArrayIndex    = GL_ELEMENT_ARRAY_BUFFER;
+                        BufferType::Uniform             = GL_UNIFORM_BUFFER;
+                        BufferType::TransferSrc         = GL_COPY_READ_BUFFER;
+                        BufferType::TransferDst         = GL_COPY_WRITE_BUFFER;
 
- //                       break;
- //                   }
+                        break;
+                    }
 
                     case API::GL45:
                     {

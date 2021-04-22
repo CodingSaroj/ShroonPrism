@@ -6,34 +6,34 @@ namespace Shroon
     {
         namespace HL
         {
-            void GL45CommandBuffer::Create(CommandBuffer & cb)
+            void GL33CommandBuffer::Create(CommandBuffer & cb)
             {
                 cb.m_Recording = false;
                 cb.m_Commands.clear();
                 cb.m_Passes.clear();
             }
 
-            void GL45CommandBuffer::Destroy(CommandBuffer & cb)
+            void GL33CommandBuffer::Destroy(CommandBuffer & cb)
             {
             }
 
-            void GL45CommandBuffer::BeginRecording(CommandBuffer & cb)
+            void GL33CommandBuffer::BeginRecording(CommandBuffer & cb)
             {
                 cb.m_Recording = true;
                 cb.m_Commands.clear();
                 cb.m_Passes.clear();
             }
 
-            void GL45CommandBuffer::EndRecording(CommandBuffer & cb)
+            void GL33CommandBuffer::EndRecording(CommandBuffer & cb)
             {
                 cb.m_Recording = false;
             }
 
-            void GL45CommandBuffer::Submit(CommandBuffer & cb)
+            void GL33CommandBuffer::Submit(CommandBuffer & cb)
             {
                 if (cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "EndRecording() not called before calling Submit().");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "EndRecording() not called before calling Submit().");
                     return;
                 }
 
@@ -100,11 +100,11 @@ namespace Shroon
                 }
             }
 
-            void GL45CommandBuffer::CmdBindPass(CommandBuffer & cb, Pass & pass, uint16_t subpassIndex)
+            void GL33CommandBuffer::CmdBindPass(CommandBuffer & cb, Pass & pass, uint16_t subpassIndex)
             {
                 if (!cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "BeginRecording() not called before recording command.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "BeginRecording() not called before recording command.");
                     return;
                 }
 
@@ -121,11 +121,11 @@ namespace Shroon
                 cmd.BindData.TargetIndex = subpassIndex;
             }
 
-            void GL45CommandBuffer::CmdBindFramebuffer(CommandBuffer & cb, Framebuffer & fb)
+            void GL33CommandBuffer::CmdBindFramebuffer(CommandBuffer & cb, Framebuffer & fb)
             {
                 if (!cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "BeginRecording() not called before recording command.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "BeginRecording() not called before recording command.");
                     return;
                 }
 
@@ -134,11 +134,11 @@ namespace Shroon
                 cmd.BindData.Target = fb.GetRaw();
             }
 
-            void GL45CommandBuffer::CmdBindMesh(CommandBuffer & cb, Mesh & mesh)
+            void GL33CommandBuffer::CmdBindMesh(CommandBuffer & cb, Mesh & mesh)
             {
                 if (!cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "BeginRecording() not called before recording command.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "BeginRecording() not called before recording command.");
                     return;
                 }
 
@@ -147,11 +147,11 @@ namespace Shroon
                 cmd.BindData.Target = mesh.GetRaw();
             }
 
-            void GL45CommandBuffer::CmdBindUBO(CommandBuffer & cb, std::string name, uint32_t bindingPoint)
+            void GL33CommandBuffer::CmdBindUBO(CommandBuffer & cb, std::string name, uint32_t bindingPoint)
             {
                 if (!cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "BeginRecording() not called before recording command.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "BeginRecording() not called before recording command.");
                     return;
                 }
 
@@ -163,11 +163,11 @@ namespace Shroon
                 cmd.BindData.TargetIndex = bindingPoint;
             }
 
-            void GL45CommandBuffer::CmdBindTexture(CommandBuffer & cb, Texture & tex, uint16_t slot)
+            void GL33CommandBuffer::CmdBindTexture(CommandBuffer & cb, Texture & tex, uint16_t slot)
             {
                 if (!cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "BeginRecording() not called before recording command.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "BeginRecording() not called before recording command.");
                     return;
                 }
 
@@ -177,11 +177,11 @@ namespace Shroon
                 cmd.BindData.TargetIndex = slot;
             }
 
-            void GL45CommandBuffer::CmdClear(CommandBuffer & cb, float r, float g, float b, float a, float depth, uint32_t stencil)
+            void GL33CommandBuffer::CmdClear(CommandBuffer & cb, float r, float g, float b, float a, float depth, uint32_t stencil)
             {
                 if (!cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "BeginRecording() not called before recording command.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "BeginRecording() not called before recording command.");
                     return;
                 }
 
@@ -197,11 +197,11 @@ namespace Shroon
                 cmd.ClearData.stencil = stencil;
             }
 
-            void GL45CommandBuffer::CmdDraw(CommandBuffer & cb, uint32_t vtxCount, uint32_t instanceCount)
+            void GL33CommandBuffer::CmdDraw(CommandBuffer & cb, uint32_t vtxCount, uint32_t instanceCount)
             {
                 if (!cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "BeginRecording() not called before recording command.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "BeginRecording() not called before recording command.");
                     return;
                 }
 
@@ -211,11 +211,11 @@ namespace Shroon
                 cmd.DrawData.InstanceCount = instanceCount;
             }
 
-            void GL45CommandBuffer::CmdDrawIndexed(CommandBuffer & cb, uint32_t vtxCount, uint32_t instanceCount)
+            void GL33CommandBuffer::CmdDrawIndexed(CommandBuffer & cb, uint32_t vtxCount, uint32_t instanceCount)
             {
                 if (!cb.m_Recording)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL4.5::CommandBuffer", "BeginRecording() not called before recording command.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_ERROR, "OpenGL3.3::CommandBuffer", "BeginRecording() not called before recording command.");
                     return;
                 }
 

@@ -1,4 +1,5 @@
 #include "hl/api/Pipeline.hpp"
+#include "hl/gl33/Pipeline.hpp"
 #include "hl/gl45/Pipeline.hpp"
 
 namespace Shroon
@@ -36,30 +37,35 @@ namespace Shroon
             {
                 switch (s_GraphicsAPI)
                 {
-//                    case API::GL33:
-//                    {
-//                        Pipeline::CreateFn  = GL45Pipeline::Create;
-//                        Pipeline::DestroyFn = GL45Pipeline::Destroy;
-//
-//                        PrimitiveType::Points        = GL_POINTS;
-//                        PrimitiveType::Lines         = GL_LINES;
-//                        PrimitiveType::LineStrip     = GL_LINE_STRIP;
-//                        PrimitiveType::Triangles     = GL_TRIANGLES;
-//                        PrimitiveType::TriangleStrip = GL_TRIANGLE_STRIP;
-//
-//                        FillType::Wireframe  = GL_LINE;
-//                        FillType::Fill       = GL_FILL;
-//
-//                        VertexAttribType::Byte      = GL_BYTE;
-//                        VertexAttribType::UByte     = GL_UNSIGNED_BYTE;
-//                        VertexAttribType::Short     = GL_SHORT;
-//                        VertexAttribType::UShort    = GL_UNSIGNED_SHORT;
-//                        VertexAttribType::Int       = GL_INT;
-//                        VertexAttribType::UInt      = GL_UNSIGNED_INT;
-//                        VertexAttribType::Float     = GL_FLOAT;
-//
-//                        break;
-//                    }
+                    case API::GL33:
+                    {
+                        Pipeline::CreateFn              = GL33Pipeline::Create;
+                        Pipeline::DestroyFn             = GL33Pipeline::Destroy;
+
+                        Pipeline::ApplyStateChangesFn   = GL33Pipeline::ApplyStateChanges;
+
+                        PrimitiveType::Points        = GL_POINTS;
+                        PrimitiveType::Lines         = GL_LINES;
+                        PrimitiveType::LineStrip     = GL_LINE_STRIP;
+                        PrimitiveType::Triangles     = GL_TRIANGLES;
+                        PrimitiveType::TriangleStrip = GL_TRIANGLE_STRIP;
+
+                        FillType::Wireframe  = GL_LINE;
+                        FillType::Fill       = GL_FILL;
+
+                        CullFace::Front = GL_FRONT;
+                        CullFace::Back  = GL_BACK;
+
+                        VertexAttribType::Byte      = GL_BYTE;
+                        VertexAttribType::UByte     = GL_UNSIGNED_BYTE;
+                        VertexAttribType::Short     = GL_SHORT;
+                        VertexAttribType::UShort    = GL_UNSIGNED_SHORT;
+                        VertexAttribType::Int       = GL_INT;
+                        VertexAttribType::UInt      = GL_UNSIGNED_INT;
+                        VertexAttribType::Float     = GL_FLOAT;
+
+                        break;
+                    }
 
                     case API::GL45:
                     {

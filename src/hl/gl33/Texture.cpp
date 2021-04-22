@@ -6,7 +6,7 @@ namespace Shroon
     {
         namespace HL
         {
-            void GL45Texture::Create(Texture & tex, TextureSpecification & spec)
+            void GL33Texture::Create(Texture & tex, TextureSpecification & spec)
             {
                 tex.m_Spec = spec;
 
@@ -33,7 +33,7 @@ namespace Shroon
                 }
             }
 
-            void GL45Texture::Destroy(Texture & tex)
+            void GL33Texture::Destroy(Texture & tex)
             {
                 glDeleteTextures(1, tex.m_Handle.AsPtrOf<GLuint>());
             }

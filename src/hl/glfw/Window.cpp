@@ -114,7 +114,7 @@ namespace Shroon
 
                 window.m_Handle = glfwCreateWindow(spec.Width, spec.Height, spec.Title.c_str(), nullptr, nullptr);
 
-                if (!window.m_Handle)
+                if (!window.m_Handle.As<GLFWwindow *>())
                 {
                     const char * msg;
                     glfwGetError(&msg);
@@ -126,7 +126,7 @@ namespace Shroon
 
                 if (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::GL45)
                 {
-                    glfwMakeContextCurrent(window.m_Handle);
+                    glfwMakeContextCurrent(window.m_Handle.As<GLFWwindow *>());
 
                     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
                     {
@@ -140,15 +140,15 @@ namespace Shroon
                     }
                 }
 
-                glfwSetWindowUserPointer(window.m_Handle, &window);
+                glfwSetWindowUserPointer(window.m_Handle.As<GLFWwindow *>(), &window);
 
-                glfwSetCharCallback(window.m_Handle, CharCallback);
-                glfwSetKeyCallback(window.m_Handle, KeyCallback);
-                glfwSetMouseButtonCallback(window.m_Handle, MouseButtonCallback);
-                glfwSetCursorPosCallback(window.m_Handle, CursorPosCallback);
-                glfwSetScrollCallback(window.m_Handle, ScrollCallback);
+                glfwSetCharCallback(window.m_Handle.As<GLFWwindow *>(), CharCallback);
+                glfwSetKeyCallback(window.m_Handle.As<GLFWwindow *>(), KeyCallback);
+                glfwSetMouseButtonCallback(window.m_Handle.As<GLFWwindow *>(), MouseButtonCallback);
+                glfwSetCursorPosCallback(window.m_Handle.As<GLFWwindow *>(), CursorPosCallback);
+                glfwSetScrollCallback(window.m_Handle.As<GLFWwindow *>(), ScrollCallback);
 
-                glfwSetFramebufferSizeCallback(window.m_Handle, ResizeCallback);
+                glfwSetFramebufferSizeCallback(window.m_Handle.As<GLFWwindow *>(), ResizeCallback);
 
                 if (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::GL45)
                 {
@@ -179,21 +179,21 @@ namespace Shroon
 
             void GLFWWindow::Destroy(Window & window)
             {
-                glfwDestroyWindow(window.GetRaw());
+                glfwDestroyWindow(window.m_Handle.As<GLFWwindow *>());
 
                 glfwTerminate();
             }
 
             Handle GLFWWindow::GetRaw(Window & window)
             {
-                return window.m_Handle;
+                return window.m_Handle.As<GLFWwindow *>();
             }
 
             uint32_t GLFWWindow::GetWidth(Window & window)
             {
                 int width;
 
-                glfwGetWindowSize(window.GetRaw(), &width, nullptr);
+                glfwGetWindowSize(window.m_Handle.As<GLFWwindow *>(), &width, nullptr);
 
                 return width;
             }
@@ -202,14 +202,14 @@ namespace Shroon
             {
                 int height;
 
-                glfwGetWindowSize(window.GetRaw(), nullptr, &height);
+                glfwGetWindowSize(window.m_Handle.As<GLFWwindow *>(), nullptr, &height);
 
                 return height;
             }
 
             void GLFWWindow::SetTitle(Window & window, const std::string & title)
             {
-                glfwSetWindowTitle(window.m_Handle, title.c_str());
+                glfwSetWindowTitle(window.m_Handle.As<GLFWwindow *>(), title.c_str());
             }
 
             void GLFWWindow::SetCharCallback(Window & window, Window::CharCallbackFn callback)
@@ -244,7 +244,7 @@ namespace Shroon
 
             void GLFWWindow::Update(Window & window, Framebuffer & src, void( * updateFn)(void *), void * userData)
             {
-                while (!glfwWindowShouldClose(window.m_Handle))
+                while (!glfwWindowShouldClose(window.m_Handle.As<GLFWwindow *>()))
                 {
                     glfwPollEvents();
 
@@ -261,7 +261,7 @@ namespace Shroon
                             0, 0, src.GetWidth() - 1, src.GetHeight() - 1
                         );
 
-                        glfwSwapBuffers(window.m_Handle);
+                        glfwSwapBuffers(window.m_Handle.As<GLFWwindow *>());
                     }
 
                     auto e1 = std::chrono::steady_clock::now();

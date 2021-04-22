@@ -6,7 +6,7 @@ namespace Shroon
     {
         namespace HL
         {
-            void GL45Pipeline::Create(Pipeline & pl, PipelineSpecification & spec)
+            void GL33Pipeline::Create(Pipeline & pl, PipelineSpecification & spec)
             {
                 pl.m_Spec = spec;
 
@@ -106,7 +106,7 @@ namespace Shroon
                         }
 
                         spirv_cross::CompilerGLSL::Options options = compiler.get_common_options();
-                        options.version = 450;
+                        options.version = 330;
                         options.vulkan_semantics = false;
 
                         compiler.set_common_options(options);
@@ -126,8 +126,8 @@ namespace Shroon
                         {
                             glGetShaderInfoLog(shaderHandles[i], 1024, nullptr, log);
 
-                            ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL4.5::ShaderCompiler", "Failed to compile " + shaderCompileData[i].ShaderType + " shader. Log:");
-                            ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL4.5::ShaderCompiler", std::string(log));
+                            ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL3.3::ShaderCompiler", "Failed to compile " + shaderCompileData[i].ShaderType + " shader. Log:");
+                            ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL3.3::ShaderCompiler", std::string(log));
 
                             glDeleteShader(shaderHandles[i]);
                         }
@@ -158,8 +158,8 @@ namespace Shroon
                 {
                     glGetProgramInfoLog(pl.m_Handle.As<GLuint>(), 1024, nullptr, log);
 
-                    ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL4.5::ShaderLinker", "Failed to link shader. Log:");
-                    ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL4.5::ShaderLinker", std::string(log));
+                    ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL3.3::ShaderLinker", "Failed to link shader. Log:");
+                    ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL3.3::ShaderLinker", std::string(log));
                 }
 
                 for (uint8_t i = 0; i < 3; i++)
@@ -172,12 +172,12 @@ namespace Shroon
                 }
             }
 
-            void GL45Pipeline::Destroy(Pipeline & pl)
+            void GL33Pipeline::Destroy(Pipeline & pl)
             {
                 glDeleteProgram(pl.m_Handle.As<GLuint>());
             }
 
-            void GL45Pipeline::ApplyStateChanges(Pipeline & pl)
+            void GL33Pipeline::ApplyStateChanges(Pipeline & pl)
             {
                 GLenum enableMask = 0;
 

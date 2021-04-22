@@ -1,4 +1,5 @@
 #include "hl/api/Pass.hpp"
+#include "hl/gl33/Pass.hpp"
 #include "hl/gl45/Pass.hpp"
 
 namespace Shroon
@@ -14,13 +15,13 @@ namespace Shroon
             {
                 switch (s_GraphicsAPI)
                 {
-//                    case API::GL33:
-//                    {
-//                        Pass::CreateFn  = GL33Pass::Create;
-//                        Pass::DestroyFn = GL33Pass::Destroy;
-//
-//                        break;
-//                    }
+                    case API::GL33:
+                    {
+                        Pass::CreateFn  = GL33Pass::Create;
+                        Pass::DestroyFn = GL33Pass::Destroy;
+
+                        break;
+                    }
 
                     case API::GL45:
                     {

@@ -10,7 +10,7 @@
 
 using namespace Shroon::Prism;
 
-HL::API Shroon::Prism::HL::s_GraphicsAPI = HL::API::GL45;
+HL::API Shroon::Prism::HL::s_GraphicsAPI = HL::API::GL45; // Can be HL::API::GL33.
 
 const float Width = 800.0f;
 const float Height = 600.0f;

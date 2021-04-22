@@ -1,4 +1,5 @@
 #include "hl/api/Framebuffer.hpp"
+#include "hl/gl33/Framebuffer.hpp"
 #include "hl/gl45/Framebuffer.hpp"
 
 namespace Shroon
@@ -21,20 +22,20 @@ namespace Shroon
             {
                 switch (s_GraphicsAPI)
                 {
-//                    case API::GL33:
-//                    {
-//                        Framebuffer::CreateFn               = GL33Framebuffer::Create;
-//                        Framebuffer::DestroyFn              = GL33Framebuffer::Destroy;
-//
-//                        Framebuffer::ResizeFn               = GL33Framebuffer::Resize;
-//
-//                        Framebuffer::ReadPixelsColorFn      = GL33Framebuffer::ReadPixelsColor;
-//                        Framebuffer::ReadPixelsDepthFn      = GL33Framebuffer::ReadPixelsDepth;
-//                        Framebuffer::ReadPixelsStencilFn    = GL33Framebuffer::ReadPixelsStencil;
-//                        Framebuffer::BlitFn                 = GL33Framebuffer::Blit;
-//
-//                        break;
-//                    }
+                    case API::GL33:
+                    {
+                        Framebuffer::CreateFn               = GL33Framebuffer::Create;
+                        Framebuffer::DestroyFn              = GL33Framebuffer::Destroy;
+
+                        Framebuffer::ResizeFn               = GL33Framebuffer::Resize;
+
+                        Framebuffer::ReadPixelsColorFn      = GL33Framebuffer::ReadPixelsColor;
+                        Framebuffer::ReadPixelsDepthFn      = GL33Framebuffer::ReadPixelsDepth;
+                        Framebuffer::ReadPixelsStencilFn    = GL33Framebuffer::ReadPixelsStencil;
+                        Framebuffer::BlitFn                 = GL33Framebuffer::Blit;
+
+                        break;
+                    }
 
                     case API::GL45:
                     {

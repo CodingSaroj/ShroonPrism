@@ -6,7 +6,7 @@ namespace Shroon
     {
         namespace HL
         {
-            void GL45Mesh::Create(Mesh & mesh, MeshSpecification & spec)
+            void GL33Mesh::Create(Mesh & mesh, MeshSpecification & spec)
             {
                 mesh.m_VertexCount = spec.VertexCount;
 
@@ -38,7 +38,7 @@ namespace Shroon
                 }
             }
 
-            void GL45Mesh::Destroy(Mesh & mesh)
+            void GL33Mesh::Destroy(Mesh & mesh)
             {
                 for (auto & buf : mesh.m_Buffers)
                 {

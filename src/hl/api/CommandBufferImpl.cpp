@@ -1,4 +1,5 @@
 #include "hl/api/CommandBuffer.hpp"
+#include "hl/gl33/CommandBuffer.hpp"
 #include "hl/gl45/CommandBuffer.hpp"
 
 namespace Shroon
@@ -32,6 +33,25 @@ namespace Shroon
                 {
                     case API::GL33:
                     {
+                        CommandBuffer::CreateFn             = GL33CommandBuffer::Create;
+                        CommandBuffer::DestroyFn            = GL33CommandBuffer::Destroy;
+
+                        CommandBuffer::BeginRecordingFn     = GL33CommandBuffer::BeginRecording;
+                        CommandBuffer::EndRecordingFn       = GL33CommandBuffer::EndRecording;
+
+                        CommandBuffer::SubmitFn             = GL33CommandBuffer::Submit;
+
+                        CommandBuffer::CmdBindPassFn        = GL33CommandBuffer::CmdBindPass;
+                        CommandBuffer::CmdBindFramebufferFn = GL33CommandBuffer::CmdBindFramebuffer;
+                        CommandBuffer::CmdBindMeshFn        = GL33CommandBuffer::CmdBindMesh;
+                        CommandBuffer::CmdBindUBOFn         = GL33CommandBuffer::CmdBindUBO;
+                        CommandBuffer::CmdBindTextureFn     = GL33CommandBuffer::CmdBindTexture;
+
+                        CommandBuffer::CmdClearFn           = GL33CommandBuffer::CmdClear;
+
+                        CommandBuffer::CmdDrawFn            = GL33CommandBuffer::CmdDraw;
+                        CommandBuffer::CmdDrawIndexedFn     = GL33CommandBuffer::CmdDrawIndexed;
+
                         break;
                     }
 

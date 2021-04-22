@@ -55,27 +55,6 @@ namespace Shroon
                 return m_Handle != handle.m_Handle;
             }
 
-            inline operator bool()
-            {
-                return m_Handle;
-            }
-
-            inline operator uint32_t()
-            {
-                return *reinterpret_cast<uint32_t *>(&m_Handle);
-            }
-
-            inline operator uint64_t()
-            {
-                return m_Handle;
-            }
-
-            template <typename T>
-            inline operator T *()
-            {
-                return reinterpret_cast<T *>(m_Handle);
-            }
-
         private:
             uint64_t m_Handle;
         };

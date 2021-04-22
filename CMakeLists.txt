@@ -19,8 +19,8 @@ set(SPIRV_CROSS_ENABLE_C_API OFF CACHE BOOL "Build SPIRV-Cross without C API out
 #add_subdirectory("external/SPIRV-Cross/")
 #"src/gl33/*.hpp" "src/gl45/*.hpp"
 #"src/gl33/*.cpp" "src/gl45/*.cpp"
-file(GLOB_RECURSE HEADER_FILES "src/*.hpp" "src/hl/api/*.hpp" "src/hl/glfw/*.hpp" "src/hl/gl45/*.hpp")
-file(GLOB_RECURSE SOURCE_FILES "src/hl/api/*.cpp" "src/hl/glfw/*.cpp" "src/hl/gl45/*.cpp")
+file(GLOB_RECURSE HEADER_FILES "src/*.hpp" "src/hl/api/*.hpp" "src/hl/glfw/*.hpp" "src/hl/gl33/*.cpp" "src/hl/gl45/*.hpp")
+file(GLOB_RECURSE SOURCE_FILES "src/hl/api/*.cpp" "src/hl/glfw/*.cpp" "src/hl/gl33/*.cpp" "src/hl/gl45/*.cpp")
 
 add_library(ShroonPrism ${HEADER_FILES} ${SOURCE_FILES} "${CMAKE_CURRENT_LIST_DIR}/external/glad/src/glad.c")
 
