@@ -6,7 +6,7 @@ namespace Shroon
     {
         namespace HL
         {
-            void GL45Framebuffer::Create(Framebuffer & fb, FramebufferSpecification & spec)
+            void ES30Framebuffer::Create(Framebuffer & fb, FramebufferSpecification & spec)
             {
                 fb.m_Spec = spec;
 
@@ -43,11 +43,11 @@ namespace Shroon
 
                 if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
                 {
-                    ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGL4.5::Framebuffer", "Framebuffer is incomplete.");
+                    ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "OpenGLES3.0::Framebuffer", "Framebuffer is incomplete.");
                 }
             }
 
-            void GL45Framebuffer::Destroy(Framebuffer & fb)
+            void ES30Framebuffer::Destroy(Framebuffer & fb)
             {
                 for (auto & attachment : fb.m_ColorAttachments)
                 {
@@ -62,7 +62,7 @@ namespace Shroon
                 glDeleteFramebuffers(1, fb.m_Handle.AsPtrOf<GLuint>());
             }
 
-            void GL45Framebuffer::Resize(Framebuffer & fb, uint32_t width, uint32_t height)
+            void ES30Framebuffer::Resize(Framebuffer & fb, uint32_t width, uint32_t height)
             {
                 for (auto & attachment : fb.m_ColorAttachments)
                 {
@@ -88,7 +88,7 @@ namespace Shroon
                 fb.m_Spec.Height = height;
             }
 
-            void GL45Framebuffer::ReadPixelsColor(Framebuffer & fb, uint32_t colorAttachmentIndex, uint32_t x, uint32_t y, uint32_t width, uint32_t height, void * data)
+            void ES30Framebuffer::ReadPixelsColor(Framebuffer & fb, uint32_t colorAttachmentIndex, uint32_t x, uint32_t y, uint32_t width, uint32_t height, void * data)
             {
                 Texture & color = fb.m_ColorAttachments[colorAttachmentIndex];
 
@@ -99,7 +99,7 @@ namespace Shroon
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
             }
 
-            void GL45Framebuffer::ReadPixelsDepth(Framebuffer & fb, uint32_t x, uint32_t y, uint32_t width, uint32_t height, void * data)
+            void ES30Framebuffer::ReadPixelsDepth(Framebuffer & fb, uint32_t x, uint32_t y, uint32_t width, uint32_t height, void * data)
             {
                 if (fb.m_Spec.Depth)
                 {
@@ -109,7 +109,7 @@ namespace Shroon
                 }
             }
 
-            void GL45Framebuffer::ReadPixelsStencil(Framebuffer & fb, uint32_t x, uint32_t y, uint32_t width, uint32_t height, void * data)
+            void ES30Framebuffer::ReadPixelsStencil(Framebuffer & fb, uint32_t x, uint32_t y, uint32_t width, uint32_t height, void * data)
             {
                 if (fb.m_Spec.Stencil)
                 {
@@ -119,7 +119,7 @@ namespace Shroon
                 }
             }
 
-            void GL45Framebuffer::Blit(Framebuffer & fb, Handle dstFB, uint32_t srcX1, uint32_t srcY1, uint32_t srcX2, uint32_t srcY2, uint32_t dstX1, uint32_t dstY1, uint32_t dstX2, uint32_t dstY2)
+            void ES30Framebuffer::Blit(Framebuffer & fb, Handle dstFB, uint32_t srcX1, uint32_t srcY1, uint32_t srcX2, uint32_t srcY2, uint32_t dstX1, uint32_t dstY1, uint32_t dstX2, uint32_t dstY2)
             {
                 glBindFramebuffer(GL_READ_FRAMEBUFFER, fb.m_Handle.As<GLuint>());
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dstFB.As<GLuint>());

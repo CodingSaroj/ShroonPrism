@@ -1,6 +1,7 @@
 #include "hl/api/Pass.hpp"
 #include "hl/gl33/Pass.hpp"
 #include "hl/gl45/Pass.hpp"
+#include "hl/es30/Pass.hpp"
 
 namespace Shroon
 {
@@ -27,6 +28,14 @@ namespace Shroon
                     {
                         Pass::CreateFn  = GL45Pass::Create;
                         Pass::DestroyFn = GL45Pass::Destroy;
+
+                        break;
+                    }
+
+                    case API::ES30:
+                    {
+                        Pass::CreateFn  = ES30Pass::Create;
+                        Pass::DestroyFn = ES30Pass::Destroy;
 
                         break;
                     }

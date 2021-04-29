@@ -162,6 +162,7 @@ namespace Shroon
                 {
                     case API::GL33:
                     case API::GL45:
+                    case API::ES30:
                     {
                         ModifierCode::Control   = GLFW_MOD_CONTROL;
                         ModifierCode::Shift     = GLFW_MOD_SHIFT;
@@ -290,6 +291,7 @@ namespace Shroon
                 {
                     case API::GL33:
                     case API::GL45:
+                    case API::ES30:
                     {
                         Window::CreateFn                    = GLFWWindow::Create;
                         Window::DestroyFn                   = GLFWWindow::Destroy;

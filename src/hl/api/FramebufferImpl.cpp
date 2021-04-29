@@ -1,6 +1,7 @@
 #include "hl/api/Framebuffer.hpp"
 #include "hl/gl33/Framebuffer.hpp"
 #include "hl/gl45/Framebuffer.hpp"
+#include "hl/es30/Framebuffer.hpp"
 
 namespace Shroon
 {
@@ -48,6 +49,21 @@ namespace Shroon
                         Framebuffer::ReadPixelsDepthFn      = GL45Framebuffer::ReadPixelsDepth;
                         Framebuffer::ReadPixelsStencilFn    = GL45Framebuffer::ReadPixelsStencil;
                         Framebuffer::BlitFn                 = GL45Framebuffer::Blit;
+
+                        break;
+                    }
+
+                    case API::ES30:
+                    {
+                        Framebuffer::CreateFn               = ES30Framebuffer::Create;
+                        Framebuffer::DestroyFn              = ES30Framebuffer::Destroy;
+
+                        Framebuffer::ResizeFn               = ES30Framebuffer::Resize;
+
+                        Framebuffer::ReadPixelsColorFn      = ES30Framebuffer::ReadPixelsColor;
+                        Framebuffer::ReadPixelsDepthFn      = ES30Framebuffer::ReadPixelsDepth;
+                        Framebuffer::ReadPixelsStencilFn    = ES30Framebuffer::ReadPixelsStencil;
+                        Framebuffer::BlitFn                 = ES30Framebuffer::Blit;
 
                         break;
                     }

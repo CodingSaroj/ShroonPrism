@@ -1,6 +1,7 @@
 #include "hl/api/Mesh.hpp"
 #include "hl/gl33/Mesh.hpp"
 #include "hl/gl45/Mesh.hpp"
+#include "hl/es30/Mesh.hpp"
 
 namespace Shroon
 {
@@ -27,6 +28,14 @@ namespace Shroon
                     {
                         Mesh::CreateFn  = GL45Mesh::Create;
                         Mesh::DestroyFn = GL45Mesh::Destroy;
+
+                        break;
+                    }
+
+                    case API::ES30:
+                    {
+                        Mesh::CreateFn  = ES30Mesh::Create;
+                        Mesh::DestroyFn = ES30Mesh::Destroy;
 
                         break;
                     }

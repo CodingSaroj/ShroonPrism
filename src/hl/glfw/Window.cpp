@@ -90,6 +90,7 @@ namespace Shroon
                 {
                     case API::GL33: APIString = "OpenGL3.3"; break;
                     case API::GL45: APIString = "OpenGL4.5"; break;
+                    case API::ES30: APIString = "OpenGLES3.0"; break;
                 }
 
                 glfwInit();
@@ -107,6 +108,13 @@ namespace Shroon
                 {
                     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
                     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+                    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+                }
+                else if (s_GraphicsAPI == API::ES30)
+                {
+                    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+                    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+                    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
                     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
                 }
 
@@ -134,9 +142,24 @@ namespace Shroon
                         exit(1);
                     }
 
-                    if (!GLAD_GL_ARB_debug_output)
+                    if (!GLAD_GL_ARB_debug_output && !GLAD_GL_KHR_debug)
                     {
-                        ErrorReporter(SHRN_PRISM_LEVEL_WARNING, APIString, "GL_ARB_debug_output is required for debugging but is not available.");
+                        ErrorReporter(SHRN_PRISM_LEVEL_WARNING, APIString, "GL_ARB_debug_output or GL_KHR_debug is required for debugging but is not available.");
+                    }
+                }
+                else if (s_GraphicsAPI == API::ES30)
+                {
+                    glfwMakeContextCurrent(window.m_Handle.As<GLFWwindow *>());
+
+                    if (!gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress))
+                    {
+                        ErrorReporter(SHRN_PRISM_LEVEL_FATAL, APIString, "Failed to load GLES functions.");
+                        exit(1);
+                    }
+
+                    if (!GLAD_GL_ARB_debug_output && !GLAD_GL_KHR_debug)
+                    {
+                        ErrorReporter(SHRN_PRISM_LEVEL_WARNING, APIString, "GL_ARB_debug_output or GL_KHR_debug is required for debugging but is not available.");
                     }
                 }
 
@@ -150,7 +173,7 @@ namespace Shroon
 
                 glfwSetFramebufferSizeCallback(window.m_Handle.As<GLFWwindow *>(), ResizeCallback);
 
-                if (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::GL45)
+                if (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::GL45 || s_GraphicsAPI == API::ES30)
                 {
                     const GLubyte * version = glGetString(GL_VERSION);
                     const GLubyte * vendor = glGetString(GL_VENDOR);
@@ -166,13 +189,21 @@ namespace Shroon
                         
                         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
                     }
-                    else if (s_GraphicsAPI == API::GL33 && GLAD_GL_ARB_debug_output)
+                    else if (GLAD_GL_ARB_debug_output && (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::ES30))
                     {
                         glEnable(GL_DEBUG_OUTPUT);
                         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
                         glDebugMessageCallbackARB(GLMsgCallback, nullptr);
                         
                         glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+                    }
+                    else if (GLAD_GL_KHR_debug && (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::ES30))
+                    {
+                        glEnable(GL_DEBUG_OUTPUT);
+                        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR);
+                        glDebugMessageCallbackKHR(GLMsgCallback, nullptr);
+                        
+                        glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
                     }
                 }
             }
@@ -254,7 +285,7 @@ namespace Shroon
 
                     updateFn(userData);
 
-                    if (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::GL45)
+                    if (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::GL45 || s_GraphicsAPI == API::ES30)
                     {
                         src.Blit(0u,
                             0, 0, src.GetWidth() - 1, src.GetHeight() - 1,

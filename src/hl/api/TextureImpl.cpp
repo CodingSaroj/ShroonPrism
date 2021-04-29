@@ -1,6 +1,7 @@
 #include "hl/api/Texture.hpp"
 #include "hl/gl33/Texture.hpp"
 #include "hl/gl45/Texture.hpp"
+#include "hl/es30/Texture.hpp"
 
 namespace Shroon
 {
@@ -55,6 +56,28 @@ namespace Shroon
                     {
                         Texture::CreateFn   = GL45Texture::Create;
                         Texture::DestroyFn  = GL45Texture::Destroy;
+
+                        TextureType::Texture2D              = GL_TEXTURE_2D;
+
+                        TextureFormat::RED              = GL_RED;
+                        TextureFormat::RED_INT          = GL_RED_INTEGER;
+                        TextureFormat::RGB              = GL_RGB;
+                        TextureFormat::RGBA             = GL_RGBA;
+                        TextureFormat::DEPTH24_STENCIL8 = GL_DEPTH24_STENCIL8;
+
+                        TextureFilter::Linear   = GL_LINEAR;
+                        TextureFilter::Nearest  = GL_NEAREST;
+
+                        TextureWrap::Repeat         = GL_REPEAT;
+                        TextureWrap::MirroredRepeat = GL_MIRRORED_REPEAT;
+
+                        break;
+                    }
+
+                    case API::ES30:
+                    {
+                        Texture::CreateFn   = ES30Texture::Create;
+                        Texture::DestroyFn  = ES30Texture::Destroy;
 
                         TextureType::Texture2D              = GL_TEXTURE_2D;
 

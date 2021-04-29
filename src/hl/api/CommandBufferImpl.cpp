@@ -1,6 +1,7 @@
 #include "hl/api/CommandBuffer.hpp"
 #include "hl/gl33/CommandBuffer.hpp"
 #include "hl/gl45/CommandBuffer.hpp"
+#include "hl/es30/CommandBuffer.hpp"
 
 namespace Shroon
 {
@@ -75,6 +76,30 @@ namespace Shroon
 
                         CommandBuffer::CmdDrawFn            = GL45CommandBuffer::CmdDraw;
                         CommandBuffer::CmdDrawIndexedFn     = GL45CommandBuffer::CmdDrawIndexed;
+
+                        break;
+                    }
+
+                    case API::ES30:
+                    {
+                        CommandBuffer::CreateFn             = ES30CommandBuffer::Create;
+                        CommandBuffer::DestroyFn            = ES30CommandBuffer::Destroy;
+
+                        CommandBuffer::BeginRecordingFn     = ES30CommandBuffer::BeginRecording;
+                        CommandBuffer::EndRecordingFn       = ES30CommandBuffer::EndRecording;
+
+                        CommandBuffer::SubmitFn             = ES30CommandBuffer::Submit;
+
+                        CommandBuffer::CmdBindPassFn        = ES30CommandBuffer::CmdBindPass;
+                        CommandBuffer::CmdBindFramebufferFn = ES30CommandBuffer::CmdBindFramebuffer;
+                        CommandBuffer::CmdBindMeshFn        = ES30CommandBuffer::CmdBindMesh;
+                        CommandBuffer::CmdBindUBOFn         = ES30CommandBuffer::CmdBindUBO;
+                        CommandBuffer::CmdBindTextureFn     = ES30CommandBuffer::CmdBindTexture;
+
+                        CommandBuffer::CmdClearFn           = ES30CommandBuffer::CmdClear;
+
+                        CommandBuffer::CmdDrawFn            = ES30CommandBuffer::CmdDraw;
+                        CommandBuffer::CmdDrawIndexedFn     = ES30CommandBuffer::CmdDrawIndexed;
 
                         break;
                     }
