@@ -8,7 +8,7 @@ layout (location = 0) out vec2 f_UV;
 layout (location = 1) out vec3 f_Normal;
 layout (location = 2) out vec3 f_FragPos;
 
-layout (binding = 1) uniform ObjectData
+layout (binding = 1, std140) uniform ObjectData
 {
     mat4 u_Model;
     mat4 u_Projection;

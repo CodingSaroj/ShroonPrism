@@ -22,12 +22,19 @@ namespace Shroon
     {
         switch (level)
         {
-            case SHRN_PRISM_LEVEL_INFO: { std::cerr<<"Info::"; break; }
+            case SHRN_PRISM_LEVEL_INFO: { std::cout<<"Info::"; break; }
             case SHRN_PRISM_LEVEL_WARNING: { std::cerr<<"Warning::"; break; }
             case SHRN_PRISM_LEVEL_ERROR: { std::cerr<<"Error::"; break; }
             case SHRN_PRISM_LEVEL_FATAL: { std::cerr<<"FatalError::"; break; }
         }
 
-        std::cout<<location<<": "<<log<<"\n";
+        if (level == SHRN_PRISM_LEVEL_INFO)
+        {
+            std::cout<<location<<": "<<log<<"\n";
+        }
+        else
+        {
+            std::cerr<<location<<": "<<log<<"\n";
+        }
     };
 #endif

@@ -10,7 +10,7 @@
 
 using namespace Shroon::Prism;
 
-HL::API Shroon::Prism::HL::s_GraphicsAPI = HL::API::ES30; // Can be HL::API::GL33.
+HL::API HL::s_GraphicsAPI;
 
 const float Width = 800.0f;
 const float Height = 600.0f;
@@ -148,7 +148,7 @@ float Normals[] = {
 };
 
 
-bool Left = false, Right = false, Up = false, Down = false, RoughPlus = false, RoughMinus = false;
+bool Left = false, Right = false, Up = false, Down = false, RoughPlus = false, RoughMinus = false, Quit = false;
 
 glm::vec3 translation(0.0f, 0.0f, -5.0f);
 glm::vec3 rotation(0.0f);
@@ -159,6 +159,11 @@ std::vector<uint32_t> ReadSPIRVBinary(const std::string & path)
 
     {
         std::ifstream in(path, std::ios_base::ate | std::ios_base::binary);
+
+        if (!in.is_open())
+        {
+            ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "App", "Failed to load `" + path + "`.");
+        }
 
         size_t fileSize = in.tellg();
         binary.resize(fileSize / sizeof(uint32_t));
@@ -174,8 +179,8 @@ std::vector<uint32_t> ReadSPIRVBinary(const std::string & path)
 
 struct
 {
-    alignas(16) glm::vec3 LightDir;
-    alignas(16) glm::vec3 LightCol;
+    glm::vec4 LightDir;
+    glm::vec4 LightCol;
 } RendererData;
 
 struct
@@ -188,6 +193,47 @@ struct
 
 int main()
 {
+#ifndef __EMSCRIPTEN__
+    uint16_t choice = 0;
+
+    std::cout<<"Choose graphics API\n";
+    std::cout<<"===================\n";
+    std::cout<<"1. OpenGL 3.3\n";
+    std::cout<<"2. OpenGL 4.5\n";
+    std::cout<<"3. OpenGL ES 3.0\n\n";
+
+    std::cout<<"Enter index of API to use: ";
+    std::cin>>choice;
+    std::cout<<"\n";
+
+    switch (choice)
+    {
+        case 1:
+        {
+            HL::s_GraphicsAPI = HL::API::GL33;
+            break;
+        }
+
+        case 2:
+        {
+            HL::s_GraphicsAPI = HL::API::GL45;
+            break;
+        }
+
+        case 3:
+        {
+            HL::s_GraphicsAPI = HL::API::ES30;
+            break;
+        }
+
+        default:
+        {
+            HL::s_GraphicsAPI = HL::API::GL45;
+            break;
+        }
+    }
+#endif
+
     unsigned char * texData = new unsigned char[256 * 256 * 4];
 
     for (uint16_t y = 0; y < 256; y++)
@@ -267,32 +313,12 @@ int main()
         {
             RoughMinus = false;
         }
+
+        if (key == HL::KeyCode::Escape && (down))
+        {
+            Quit = true;
+        }
     });
-
-    RendererData.LightDir = {0.0f, 0.0f, 1.0f};
-    RendererData.LightCol = {1.0f, 1.0f, 1.0f};
-
-    ObjectData.Projection = glm::perspective(45.0f, (float)Width / (float)Height, 0.01f, 1000.0f);
-    ObjectData.Roughness = 0.0f;
-    ObjectData.Specular = 1.0f;
-
-    HL::Buffer rendererDataUBO;
-    HL::Buffer objectDataUBO;
-
-    {
-        HL::BufferSpecification spec;
-        spec.Type = HL::BufferType::Uniform;
-        spec.Dynamic = true;
-        spec.Data = &RendererData;
-        spec.Size = sizeof(RendererData);
-
-        rendererDataUBO.Create(spec);
-
-        spec.Data = &ObjectData;
-        spec.Size = sizeof(ObjectData);
-
-        objectDataUBO.Create(spec);
-    }
 
     HL::VertexBufferInputDescription desc1, desc2, desc3;
 
@@ -339,6 +365,31 @@ int main()
         spec.FragmentShader = &fs;
 
         pl.Create(spec);
+    }
+
+    RendererData.LightDir = {0.0f, 0.0f, 1.0f, 0.0f};
+    RendererData.LightCol = {1.0f, 1.0f, 1.0f, 0.0f};
+
+    ObjectData.Projection = glm::perspective(45.0f, (float)Width / (float)Height, 0.01f, 1000.0f);
+    ObjectData.Roughness = 0.0f;
+    ObjectData.Specular = 1.0f;
+
+    HL::Buffer rendererDataUBO;
+    HL::Buffer objectDataUBO;
+
+    {
+        HL::BufferSpecification spec;
+        spec.Type = HL::BufferType::Uniform;
+        spec.Dynamic = true;
+        spec.Data = &RendererData;
+        spec.Size = pl.GetUniformBufferLayouts().at("RendererData").Size;
+
+        rendererDataUBO.Create(spec);
+
+        spec.Data = &ObjectData;
+        spec.Size = pl.GetUniformBufferLayouts().at("ObjectData").Size;
+
+        objectDataUBO.Create(spec);
     }
 
     HL::Mesh mesh;
@@ -476,13 +527,21 @@ int main()
 
     struct FrameData
     {
+        HL::Window & Window;
+        HL::Pipeline & Pl;
         HL::CommandBuffer & CB;
         HL::Buffer & ObjDataUBO, & RenderDataUBO;
-    } framedata{cb, objectDataUBO, rendererDataUBO};
+    } framedata{window, pl, cb, objectDataUBO, rendererDataUBO};
 
     window.Update(fb, [](void * data)
     {
         FrameData & dt = *reinterpret_cast<FrameData *>(data);
+
+        if (Quit)
+        {
+            dt.Window.Quit();
+            return;
+        }
 
         if (Up)
         {
@@ -523,7 +582,7 @@ int main()
         ObjectData.Model = glm::rotate(ObjectData.Model, glm::radians(rotation.y), glm::vec3{0.0f, 1.0f, 0.0f});
         ObjectData.Model = glm::rotate(ObjectData.Model, glm::radians(rotation.z), glm::vec3{0.0f, 0.0f, 1.0f});
 
-        dt.ObjDataUBO.Write(&ObjectData, 0, sizeof(ObjectData));
+        dt.ObjDataUBO.Write(&ObjectData, 0, dt.Pl.GetUniformBufferLayouts().at("ObjectData").Size);
 
         dt.CB.Submit();
     }, &framedata);

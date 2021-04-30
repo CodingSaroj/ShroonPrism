@@ -124,12 +124,17 @@ namespace Shroon
 
                 if (!window.m_Handle.As<GLFWwindow *>())
                 {
+                    // Emscripten uses GLFW which does not support glfwGetError().
+                #if __EMSCRIPTEN__
+                    ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "GLFW::Window", "Failed to create window.");
+                #else
                     const char * msg;
                     glfwGetError(&msg);
 
                     ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "GLFW::Window", "Failed to create window.");
                     ErrorReporter(SHRN_PRISM_LEVEL_FATAL, "GLFW::Window", msg);
                     exit(1);
+                #endif
                 }
 
                 if (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::GL45)
@@ -141,11 +146,6 @@ namespace Shroon
                         ErrorReporter(SHRN_PRISM_LEVEL_FATAL, APIString, "Failed to load GL functions.");
                         exit(1);
                     }
-
-                    if (!GLAD_GL_ARB_debug_output && !GLAD_GL_KHR_debug)
-                    {
-                        ErrorReporter(SHRN_PRISM_LEVEL_WARNING, APIString, "GL_ARB_debug_output or GL_KHR_debug is required for debugging but is not available.");
-                    }
                 }
                 else if (s_GraphicsAPI == API::ES30)
                 {
@@ -155,11 +155,6 @@ namespace Shroon
                     {
                         ErrorReporter(SHRN_PRISM_LEVEL_FATAL, APIString, "Failed to load GLES functions.");
                         exit(1);
-                    }
-
-                    if (!GLAD_GL_ARB_debug_output && !GLAD_GL_KHR_debug)
-                    {
-                        ErrorReporter(SHRN_PRISM_LEVEL_WARNING, APIString, "GL_ARB_debug_output or GL_KHR_debug is required for debugging but is not available.");
                     }
                 }
 
@@ -177,33 +172,42 @@ namespace Shroon
                 {
                     const GLubyte * version = glGetString(GL_VERSION);
                     const GLubyte * vendor = glGetString(GL_VENDOR);
+                    const GLubyte * renderer = glGetString(GL_RENDERER);
                     
-                    ErrorReporter(SHRN_PRISM_LEVEL_INFO, APIString, "Version:" + std::string(reinterpret_cast<const char *>(version)) + ".");
-                    ErrorReporter(SHRN_PRISM_LEVEL_INFO, APIString, "Vendor:" + std::string(reinterpret_cast<const char *>(vendor)) + ".");
+                    ErrorReporter(SHRN_PRISM_LEVEL_INFO, APIString, "Version: " + std::string(reinterpret_cast<const char *>(version)) + ".");
+                    ErrorReporter(SHRN_PRISM_LEVEL_INFO, APIString, "Vendor: " + std::string(reinterpret_cast<const char *>(vendor)) + ".");
+                    ErrorReporter(SHRN_PRISM_LEVEL_INFO, APIString, "Renderer: " + std::string(reinterpret_cast<const char *>(renderer)) + ".");
 
-                    if (s_GraphicsAPI == API::GL45)
+                    if (GLAD_GL_ARB_debug_output || GLAD_GL_KHR_debug)
                     {
-                        glEnable(GL_DEBUG_OUTPUT);
-                        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                        glDebugMessageCallback(GLMsgCallback, nullptr);
-                        
-                        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+                        if (s_GraphicsAPI == API::GL45)
+                        {
+                            glEnable(GL_DEBUG_OUTPUT);
+                            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+                            glDebugMessageCallback(GLMsgCallback, nullptr);
+                            
+                            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+                        }
+                        else if (GLAD_GL_ARB_debug_output && (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::ES30))
+                        {
+                            glEnable(GL_DEBUG_OUTPUT);
+                            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+                            glDebugMessageCallbackARB(GLMsgCallback, nullptr);
+                            
+                            glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+                        }
+                        else if (GLAD_GL_KHR_debug && (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::ES30))
+                        {
+                            glEnable(GL_DEBUG_OUTPUT);
+                            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR);
+                            glDebugMessageCallbackKHR(GLMsgCallback, nullptr);
+                            
+                            glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+                        }
                     }
-                    else if (GLAD_GL_ARB_debug_output && (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::ES30))
+                    else
                     {
-                        glEnable(GL_DEBUG_OUTPUT);
-                        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
-                        glDebugMessageCallbackARB(GLMsgCallback, nullptr);
-                        
-                        glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
-                    }
-                    else if (GLAD_GL_KHR_debug && (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::ES30))
-                    {
-                        glEnable(GL_DEBUG_OUTPUT);
-                        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR);
-                        glDebugMessageCallbackKHR(GLMsgCallback, nullptr);
-                        
-                        glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+                        ErrorReporter(SHRN_PRISM_LEVEL_WARNING, APIString, "GL_ARB_debug_output or GL_KHR_debug is required for debugging but is not available.");
                     }
                 }
             }
@@ -275,24 +279,43 @@ namespace Shroon
 
             void GLFWWindow::Update(Window & window, Framebuffer & src, void( * updateFn)(void *), void * userData)
             {
-                while (!glfwWindowShouldClose(window.m_Handle.As<GLFWwindow *>()))
+                window.m_IsRunning = true;
+
+                struct UpdateData
                 {
+                    Window & This;
+                    Framebuffer & Src;
+                    void( * UpdateFn)(void *);
+                    void * UserData;
+                } updateData{window, src, updateFn, userData};
+                
+                auto update = [](void * data)
+                {
+                    UpdateData & dt = *reinterpret_cast<UpdateData *>(data);
+
+                #ifdef __EMSCRIPTEN__
+                    if (!dt.This.m_IsRunning)
+                    {
+                        emscripten_cancel_main_loop();
+                    }
+                #endif
+
                     glfwPollEvents();
 
                     glfwSetTime(0.0);
 
                     auto s = std::chrono::steady_clock::now();
 
-                    updateFn(userData);
+                    dt.UpdateFn(dt.UserData);
 
                     if (s_GraphicsAPI == API::GL33 || s_GraphicsAPI == API::GL45 || s_GraphicsAPI == API::ES30)
                     {
-                        src.Blit(0u,
-                            0, 0, src.GetWidth() - 1, src.GetHeight() - 1,
-                            0, 0, src.GetWidth() - 1, src.GetHeight() - 1
+                        dt.Src.Blit(0u,
+                            0, 0, dt.Src.GetWidth() - 1, dt.Src.GetHeight() - 1,
+                            0, 0, dt.Src.GetWidth() - 1, dt.Src.GetHeight() - 1
                         );
 
-                        glfwSwapBuffers(window.m_Handle.As<GLFWwindow *>());
+                        glfwSwapBuffers(dt.This.m_Handle.As<GLFWwindow *>());
                     }
 
                     auto e1 = std::chrono::steady_clock::now();
@@ -304,13 +327,22 @@ namespace Shroon
                     auto d1 = e1 - s;
                     auto d2 = e2 - s;
 
-                    ErrorReporter(SHRN_PRISM_LEVEL_INFO, "PrismTest",
+                    ErrorReporter(SHRN_PRISM_LEVEL_INFO, "Window",
                         "Frametime: " +
                         std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(d2).count()) + "ms\t" +
                         "Render + Presentation time: " +
                         std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(d1).count()) + "ms."
                     );
+                };
+
+            #ifdef __EMSCRIPTEN__
+                emscripten_set_main_loop_arg(update, &updateData, 0, EM_TRUE);
+            #else
+                while (!glfwWindowShouldClose(window.m_Handle.As<GLFWwindow *>()) && window.m_IsRunning)
+                {
+                    update(&updateData);
                 }
+            #endif
             }
         }
     }

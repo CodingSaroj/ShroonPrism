@@ -135,6 +135,11 @@ namespace Shroon
                     return m_Spec;
                 }
 
+                inline const std::unordered_map<std::string, UniformStructureNode> & GetUniformBufferLayouts()
+                {
+                    return m_UniformStructures;
+                }
+
                 inline void ClearFlag(PipelineState::PipelineStateFlags mask)
                 {
                     m_State.Flags = static_cast<PipelineState::PipelineStateFlags>(m_State.Flags & ~mask);
@@ -177,7 +182,7 @@ namespace Shroon
                 PipelineState m_State;
                 PipelineSpecification m_Spec;
 
-                std::vector<UniformStructureNode> m_UniformStructures;
+                std::unordered_map<std::string, UniformStructureNode> m_UniformStructures;
 
                 static void( * CreateFn)(Pipeline &, PipelineSpecification &);
                 static void( * DestroyFn)(Pipeline &);

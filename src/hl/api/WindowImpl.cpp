@@ -14,8 +14,7 @@ namespace Shroon
                 uint32_t Control;
                 uint32_t Shift;
                 uint32_t Alt;
-                uint32_t CapsLock;
-                uint32_t NumLock;
+                uint32_t Super;
             }
 
             namespace KeyCode
@@ -167,8 +166,7 @@ namespace Shroon
                         ModifierCode::Control   = GLFW_MOD_CONTROL;
                         ModifierCode::Shift     = GLFW_MOD_SHIFT;
                         ModifierCode::Alt       = GLFW_MOD_ALT;
-                        ModifierCode::CapsLock  = GLFW_MOD_CAPS_LOCK;
-                        ModifierCode::NumLock   = GLFW_MOD_NUM_LOCK;
+                        ModifierCode::Super     = GLFW_MOD_SUPER;
 
                         KeyCode::NumLock        = GLFW_KEY_NUM_LOCK;
                         KeyCode::Num0           = GLFW_KEY_KP_0;

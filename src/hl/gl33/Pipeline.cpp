@@ -42,17 +42,7 @@ namespace Shroon
 
                         for (auto & uniform : resources.uniform_buffers)
                         {
-                            auto iter = std::find_if(pl.m_UniformStructures.begin(), pl.m_UniformStructures.end(), [&uniform](const UniformStructureNode & fmt)
-                            {
-                                if (fmt.Name == uniform.name)
-                                {
-                                    return true;
-                                }
-                                else
-                                {
-                                    return false;
-                                }
-                            });
+                            auto iter = pl.m_UniformStructures.find(uniform.name);
 
                             if (iter != pl.m_UniformStructures.end())
                             {
@@ -64,6 +54,11 @@ namespace Shroon
                             node.Name = uniform.name;
                             node.Size = compiler.get_declared_struct_size(node.Type);
                             auto ranges = compiler.get_active_buffer_ranges(uniform.id);
+
+                            if (node.Size % 16)
+                            {
+                                node.Size += 16 - (node.Size % 16);
+                            }
 
                             if (node.Type.basetype == spirv_cross::SPIRType::BaseType::Struct)
                             {
@@ -94,7 +89,7 @@ namespace Shroon
                                 }
                             }
 
-                            pl.m_UniformStructures.emplace_back(std::move(node));
+                            pl.m_UniformStructures[node.Name] = std::move(node);
                         }
 
                         for (auto & sampledImage : resources.sampled_images)

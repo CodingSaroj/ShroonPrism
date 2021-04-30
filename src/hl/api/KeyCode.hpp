@@ -13,8 +13,7 @@ namespace Shroon
                 extern uint32_t Control;
                 extern uint32_t Shift;
                 extern uint32_t Alt;
-                extern uint32_t CapsLock;
-                extern uint32_t NumLock;
+                extern uint32_t Super;
             }
 
             namespace KeyCode

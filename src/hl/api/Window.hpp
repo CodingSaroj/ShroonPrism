@@ -97,8 +97,15 @@ namespace Shroon
                     UpdateFn(*this, src, updateFn, userData);
                 }
 
+                inline void Quit()
+                {
+                    m_IsRunning = false;
+                }
+
             private:
                 Handle m_Handle;
+
+                bool m_IsRunning = false;
 
                 CharCallbackFn m_CharCallback = nullptr;
                 KeyCallbackFn m_KeyCallback = nullptr;
